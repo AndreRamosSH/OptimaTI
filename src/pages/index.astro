@@ -1,184 +1,322 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import IshikawaDiagram from '../components/IshikawaDiagram.astro';
 ---
-<Layout title="OptimaTI - Diagnóstico">
-    <div class="flex-1 max-w-4xl w-full mx-auto px-4 py-8 flex flex-col justify-center">
+<Layout title="OptimaTI - Análisis y Gráficos">
+    <div class="flex-1 max-w-6xl w-full mx-auto px-4 py-8 flex flex-col justify-center">
         
-        <div id="capture-area" class="glass p-6 md:p-10 rounded-3xl relative overflow-hidden shadow-2xl border border-white/10 bg-primary/95">
+        <div id="capture-area" class="glass p-6 md:p-10 rounded-3xl relative overflow-hidden shadow-2xl border border-white/10 bg-primary/95 min-h-[600px]">
             <!-- Decorative blur -->
             <div class="absolute -right-20 -bottom-20 w-72 h-72 bg-accent/20 rounded-full blur-3xl pointer-events-none z-0"></div>
             
-            <!-- Paso 0: Inicio -->
-            <div id="step-0" class="step-container relative z-10 text-center animate-fade-in">
-                <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-secondary/50 flex items-center justify-center border border-accent/40 text-sand shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10.04 15.28a3 3 0 1 1-1.52-5.12 3 3 0 0 1 1.52 5.12z"/><path d="m11 14 3 3"/></svg>
+            <!-- Paso 0: Definir Problema -->
+            <div id="step-0" class="step-container relative z-10 animate-fade-in flex flex-col items-center justify-center h-full pt-10">
+                <div class="w-20 h-20 mb-6 rounded-full bg-secondary/50 flex items-center justify-center border border-accent/40 text-sand shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                 </div>
-                <h2 class="text-3xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-light to-sand">
-                    Diagnóstico de Incidentes
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-light to-sand text-center">
+                    Definición del Problema
                 </h2>
-                <p class="text-base md:text-lg text-gray-300 mb-8 max-w-lg mx-auto">
-                    Simula ser el Gestor Técnico. Analiza el síntoma y deduce la causa raíz para generar un ticket de acción basado en ITIL.
-                </p>
-                <button onclick="startRandomCase()" class="bg-accent hover:bg-accent/80 text-white font-semibold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(65,90,119,0.5)] transition-all transform hover:-translate-y-1">
-                    Analizar Incidente Aleatorio
+                <p class="text-gray-400 mb-8 text-center max-w-md">Ingresa el efecto o incidente principal que deseas analizar sistémicamente.</p>
+                
+                <input type="text" id="problem-input" value="Baja Eficiencia Operativa" class="w-full max-w-md bg-white/5 border border-white/20 rounded-xl p-4 text-white outline-none focus:border-sand text-center text-xl font-bold mb-8 shadow-inner" />
+                
+                <button onclick="startAnalysis()" class="bg-sand hover:bg-white text-primary font-bold py-3 px-8 rounded-lg transition-all shadow-[0_0_15px_rgba(212,196,168,0.4)]">
+                    Comenzar Análisis
                 </button>
             </div>
 
-            <!-- Paso 1: Síntoma y Deducción -->
+            <!-- Paso 1: Tablero de Causas -->
             <div id="step-1" class="step-container hidden relative z-10 animate-fade-in">
-                <div class="flex justify-between items-end mb-6">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4 mb-6">
                     <div>
-                        <div class="text-sm font-semibold text-accent mb-1">INCIDENTE DETECTADO</div>
-                        <h3 id="ui-case-title" class="text-2xl font-bold text-sand"></h3>
+                        <div class="text-sm font-semibold text-accent mb-1">ANALIZANDO PROBLEMA</div>
+                        <h3 id="display-problem" class="text-2xl font-bold text-sand uppercase"></h3>
                     </div>
+                    <button onclick="generateDiagrams()" class="bg-success/80 hover:bg-success text-white font-bold py-2 px-6 rounded-lg shadow-lg flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Generar Ishikawa y Pareto
+                    </button>
                 </div>
                 
-                <div class="bg-white/5 border border-white/10 rounded-xl p-5 mb-8">
-                    <div class="text-sm text-gray-400 mb-2">Síntoma reportado por el cliente/usuario:</div>
-                    <p id="ui-case-symptom" class="text-lg italic text-light leading-relaxed"></p>
-                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Columna Izquierda: Agregar Causas -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                            <h4 class="font-bold text-white mb-4 border-b border-white/10 pb-2">Añadir Causa Manual</h4>
+                            <div class="space-y-3">
+                                <select id="manual-category" class="w-full bg-primary border border-white/20 rounded-lg p-2 text-sm text-white">
+                                    <option value="Procesos">Procesos</option>
+                                    <option value="Infraestructura">Infraestructura</option>
+                                    <option value="Personal">Personal</option>
+                                    <option value="Herramientas">Herramientas</option>
+                                </select>
+                                <input type="text" id="manual-cause" placeholder="Descripción de la causa..." class="w-full bg-primary border border-white/20 rounded-lg p-2 text-sm text-white outline-none" />
+                                <div class="flex items-center gap-2">
+                                    <label class="text-xs text-gray-400">Impacto (1-5):</label>
+                                    <input type="range" id="manual-score" min="1" max="5" value="3" class="flex-1" oninput="document.getElementById('score-val').textContent = this.value" />
+                                    <span id="score-val" class="font-bold text-sand">3</span>
+                                </div>
+                                <button onclick="addManualCause()" class="w-full bg-white/10 hover:bg-white/20 py-2 rounded-lg text-sm font-bold border border-white/10">
+                                    Añadir al Tablero
+                                </button>
+                            </div>
+                        </div>
 
-                <h4 class="font-bold mb-4">¿Cuál es la causa técnica de este problema?</h4>
-                <div id="ui-case-options" class="grid gap-3">
-                    <!-- Opciones inyectadas por JS -->
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                            <h4 class="font-bold text-white mb-2 border-b border-white/10 pb-2 text-sm flex justify-between">
+                                Causas Rápidas (Por defecto)
+                            </h4>
+                            <p class="text-xs text-gray-500 mb-3">Clic para agregar instantáneamente a la exposición.</p>
+                            <div id="default-causes-list" class="space-y-2 max-h-48 overflow-y-auto custom-scroll pr-1">
+                                <!-- Llenado por JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Tablero de las 4 Ramas -->
+                    <div class="lg:col-span-2 grid grid-cols-2 gap-4">
+                        <div class="bg-primary/40 border border-white/10 rounded-xl p-4 min-h-[150px]">
+                            <h5 class="font-bold text-accent mb-2 flex justify-between">Procesos <span id="count-Procesos" class="text-xs bg-accent/20 px-2 rounded-full">0</span></h5>
+                            <ul id="list-Procesos" class="space-y-2 text-sm"></ul>
+                        </div>
+                        <div class="bg-primary/40 border border-white/10 rounded-xl p-4 min-h-[150px]">
+                            <h5 class="font-bold text-accent mb-2 flex justify-between">Infraestructura <span id="count-Infraestructura" class="text-xs bg-accent/20 px-2 rounded-full">0</span></h5>
+                            <ul id="list-Infraestructura" class="space-y-2 text-sm"></ul>
+                        </div>
+                        <div class="bg-primary/40 border border-white/10 rounded-xl p-4 min-h-[150px]">
+                            <h5 class="font-bold text-accent mb-2 flex justify-between">Personal <span id="count-Personal" class="text-xs bg-accent/20 px-2 rounded-full">0</span></h5>
+                            <ul id="list-Personal" class="space-y-2 text-sm"></ul>
+                        </div>
+                        <div class="bg-primary/40 border border-white/10 rounded-xl p-4 min-h-[150px]">
+                            <h5 class="font-bold text-accent mb-2 flex justify-between">Herramientas <span id="count-Herramientas" class="text-xs bg-accent/20 px-2 rounded-full">0</span></h5>
+                            <ul id="list-Herramientas" class="space-y-2 text-sm"></ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Paso 2: Resultado (Reporte) -->
-            <div id="step-2" class="step-container hidden relative z-10 animate-fade-in pb-10">
+            <!-- Paso 2: Resultados (Ishikawa + Pareto) -->
+            <div id="step-2" class="step-container hidden relative z-10 animate-fade-in pb-4">
                 <div class="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
                     <div>
-                        <div id="ui-ticket-id" class="text-sm font-mono text-accent"></div>
-                        <h3 class="text-2xl font-bold text-white">Reporte de Análisis Raíz</h3>
+                        <h3 class="text-2xl font-bold text-white">Análisis de Riesgos Generado</h3>
+                        <p id="res-problem" class="text-sand font-bold uppercase"></p>
                     </div>
-                    <div class="bg-success/20 text-success border border-success/30 px-3 py-1 rounded-md text-sm font-bold flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                        DIAGNOSTICADO
+                    <div class="flex gap-2">
+                        <button onclick="goToStep(1)" class="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2 rounded-lg text-sm font-bold">Editar Causas</button>
                     </div>
                 </div>
                 
-                <div class="space-y-6">
-                    <div class="bg-primary/50 p-4 rounded-xl border border-white/5">
-                        <div class="text-sm text-gray-400 mb-1">Causa Raíz Identificada</div>
-                        <div id="ui-res-causa" class="text-xl font-bold text-sand"></div>
-                    </div>
-
+                <div class="space-y-8">
+                    
+                    <!-- Diagrama Ishikawa Dinámico -->
                     <div>
-                        <div class="text-sm text-gray-400 mb-1">Detalle del Hallazgo</div>
-                        <p id="ui-res-hallazgo" class="text-lg bg-white/5 p-3 rounded-lg border border-white/5 text-gray-200"></p>
+                        <h4 class="text-lg font-bold mb-4 text-center">1. Arquetipo Sistémico (Diagrama Ishikawa)</h4>
+                        <div class="w-full overflow-hidden bg-primary/40 rounded-xl border border-white/10 relative p-4" id="ishikawa-export-area">
+                            <div class="relative w-full aspect-[2/1] min-w-[700px] mx-auto" id="ishikawa-canvas">
+                                <!-- SVG Bones -->
+                                <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+                                    <defs>
+                                        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#415A77" />
+                                        </marker>
+                                    </defs>
+                                    <line x1="50" y1="250" x2="800" y2="250" stroke="#415A77" stroke-width="6" marker-end="url(#arrow)"/>
+                                    <line x1="250" y1="100" x2="400" y2="250" stroke="#415A77" stroke-width="4"/>
+                                    <line x1="550" y1="100" x2="700" y2="250" stroke="#415A77" stroke-width="4"/>
+                                    <line x1="250" y1="400" x2="400" y2="250" stroke="#415A77" stroke-width="4"/>
+                                    <line x1="550" y1="400" x2="700" y2="250" stroke="#415A77" stroke-width="4"/>
+                                </svg>
+                                <!-- Cabeza -->
+                                <div class="absolute right-[5%] top-1/2 -translate-y-1/2 bg-secondary border-2 border-sand p-4 rounded-xl text-center shadow-xl z-10 w-48">
+                                    <span id="ishi-head" class="text-base font-black text-sand leading-tight block uppercase"></span>
+                                </div>
+                                <!-- Ramas -->
+                                <div class="absolute left-[5%] top-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-60 shadow-lg backdrop-blur-md">
+                                    <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1">Procesos</div>
+                                    <ul id="ishi-Procesos" class="text-xs text-gray-300 space-y-1 list-disc list-inside"></ul>
+                                </div>
+                                <div class="absolute left-[35%] top-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-64 shadow-lg backdrop-blur-md">
+                                    <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1">Infraestructura</div>
+                                    <ul id="ishi-Infraestructura" class="text-xs text-gray-300 space-y-1 list-disc list-inside"></ul>
+                                </div>
+                                <div class="absolute left-[5%] bottom-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-60 shadow-lg backdrop-blur-md">
+                                    <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1">Personal</div>
+                                    <ul id="ishi-Personal" class="text-xs text-gray-300 space-y-1 list-disc list-inside"></ul>
+                                </div>
+                                <div class="absolute left-[35%] bottom-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-64 shadow-lg backdrop-blur-md">
+                                    <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1">Herramientas</div>
+                                    <ul id="ishi-Herramientas" class="text-xs text-gray-300 space-y-1 list-disc list-inside"></ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <div class="text-sm text-gray-400 mb-1">Plan de Acción Recomendado (Gestión Técnica)</div>
-                        <p id="ui-res-accion" class="text-lg text-light leading-relaxed"></p>
-                    </div>
+                    <!-- Diagrama de Pareto Dinámico -->
+                    <div class="w-full">
+                        <h4 class="text-lg font-bold mb-4 text-center">2. Diagrama de Pareto (Priorización de Riesgos)</h4>
+                        <div class="w-full overflow-hidden bg-primary/40 rounded-xl border border-white/10 relative p-6 md:px-12 pt-10">
+                            <div class="w-full max-w-[800px] mx-auto h-[220px] relative flex items-end justify-around border-b-2 border-l-2 border-white/20 pb-2 pl-2" id="pareto-container">
+                                <!-- Eje Y Izquierdo (Impacto) -->
+                                <div class="absolute left-[-25px] top-0 bottom-0 flex flex-col justify-between text-xs text-gray-400 pb-2">
+                                    <span>Max</span><span>-</span><span>Min</span>
+                                </div>
+                                <!-- Eje Y Derecho (%) -->
+                                <div class="absolute right-[-35px] top-0 bottom-0 flex flex-col justify-between text-xs text-accent pb-2 font-bold">
+                                    <span>100%</span><span>50%</span><span>0%</span>
+                                </div>
 
-                    <!-- Botón para ver Diagrama Ishikawa -->
-                    <div class="pt-4 mt-6 border-t border-white/10 text-center">
-                        <button onclick="openDiagramModal()" class="inline-flex items-center gap-2 bg-sand hover:bg-white text-primary font-bold py-2 px-6 rounded-lg transition-all shadow-[0_0_15px_rgba(212,196,168,0.4)] hover:shadow-[0_0_25px_rgba(212,196,168,0.7)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
-                            Mostrar Mapa Analítico (Ishikawa)
-                        </button>
+                                <!-- Línea acumulada SVG -->
+                                <svg id="pareto-line-svg" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 10; overflow: visible;"></svg>
+
+                                <!-- Barras inyectadas por JS -->
+                            </div>
+                            <div class="text-center text-xs text-gray-400 mt-8">Regla 80/20: Enfócate en las causas de la izquierda para resolver la mayor parte del problema.</div>
+                        </div>
                     </div>
+                    
                 </div>
             </div>
 
         </div>
 
-        <!-- Botones de Acción Post-Reporte (Fuera de la zona de captura para no imprimir en PDF) -->
+        <!-- Botones de Acción Post-Reporte -->
         <div id="post-actions" class="hidden flex flex-wrap gap-4 mt-6 justify-center z-20 relative">
-            <button onclick="goToStep(0)" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold py-2 px-6 rounded-lg transition-all">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                Analizar Nuevo Caso
+            <button onclick="downloadReport()" class="flex items-center gap-2 bg-sand text-primary hover:bg-white font-bold py-3 px-8 rounded-lg shadow-lg transition-colors text-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Exportar Análisis Completo (PNG)
             </button>
         </div>
     </div>
 
-    <!-- Modal del Diagrama Ishikawa -->
-    <div id="diagram-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-primary/90 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-card w-[95%] max-w-6xl rounded-3xl p-6 md:p-10 relative shadow-2xl border border-white/20 transform scale-95 transition-transform duration-300 flex flex-col" id="diagram-modal-content">
-            
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl md:text-3xl font-bold text-sand text-left">Arquetipo Sistémico de Causa y Efecto</h3>
-                <div class="flex gap-2">
-                    <button onclick="exportDiagram()" class="bg-accent/80 hover:bg-accent rounded-full p-2 text-white transition-colors flex items-center gap-2 px-4 shadow-lg text-sm font-bold">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Exportar Diagrama
-                    </button>
-                    <button onclick="closeDiagramModal()" class="bg-white/10 hover:bg-white/20 rounded-full p-2 text-white transition-colors shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
-                </div>
-            </div>
-            
-            <p class="text-left text-gray-400 mb-6">El área resaltada indica la causa raíz diagnosticada en el incidente actual.</p>
-            
-            <div class="flex-1 w-full bg-primary/50 rounded-2xl overflow-x-auto custom-scroll shadow-inner">
-                <div class="min-w-[900px] p-4">
-                    <IshikawaDiagram />
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Scripts de Lógica -->
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    
     <script type="module">
-        import { getCases, saveTicket } from '/src/scripts/store.js';
-        import * as htmlToImage from 'html-to-image';
+        import { saveTicket } from '/src/scripts/store.js';
         
-        let currentCase = null;
-        let cases = [];
+        let problemText = "";
+        let selectedCauses = [];
+        
+        const defaultCauses = [
+            { id: 'dc1', text: "Falta de estandarización ITIL", category: "Procesos", score: 4 },
+            { id: 'dc2', text: "Documentación desactualizada", category: "Procesos", score: 2 },
+            { id: 'dc3', text: "Servidores con capacidad insuficiente", category: "Infraestructura", score: 5 },
+            { id: 'dc4', text: "Fallas de hardware recurrentes", category: "Infraestructura", score: 3 },
+            { id: 'dc5', text: "Falta de capacitación continua", category: "Personal", score: 4 },
+            { id: 'dc6', text: "Comunicación deficiente", category: "Personal", score: 2 },
+            { id: 'dc7', text: "Sistemas de monitoreo obsoletos", category: "Herramientas", score: 5 },
+            { id: 'dc8', text: "Integración limitada entre plataformas", category: "Herramientas", score: 3 }
+        ];
 
         window.goToStep = (step) => {
             document.querySelectorAll('.step-container').forEach(el => el.classList.add('hidden'));
             document.getElementById(`step-${step}`).classList.remove('hidden');
+            if(step !== 2) document.getElementById('post-actions').classList.add('hidden');
+        };
+
+        window.startAnalysis = () => {
+            problemText = document.getElementById('problem-input').value || "Baja Eficiencia Operativa";
+            document.getElementById('display-problem').textContent = problemText;
+            renderDefaultCauses();
+            updateBoard();
+            goToStep(1);
+        };
+
+        window.renderDefaultCauses = () => {
+            const container = document.getElementById('default-causes-list');
+            container.innerHTML = '';
+            defaultCauses.forEach(c => {
+                const isAdded = selectedCauses.some(s => s.text.toLowerCase() === c.text.toLowerCase());
+                const div = document.createElement('div');
+                
+                div.className = `flex justify-between items-center p-2 rounded border transition-colors ${isAdded ? 'bg-white/5 border-white/5 opacity-40 cursor-not-allowed' : 'bg-white/5 border-white/5 hover:bg-white/10 cursor-pointer'}`;
+                div.onclick = () => { if(!isAdded) addCause(c.text, c.category, c.score) };
+                
+                div.innerHTML = `
+                    <div class="text-xs w-2/3 truncate" title="${c.text}">${c.text} ${isAdded ? '✓' : ''} <span class="text-gray-500 block">${c.category}</span></div>
+                    <div class="text-xs font-bold text-sand bg-sand/20 px-2 py-1 rounded">Imp: ${c.score}</div>
+                `;
+                container.appendChild(div);
+            });
+        };
+
+        window.addManualCause = () => {
+            const text = document.getElementById('manual-cause').value.trim();
+            if(!text) return alert("Escribe una causa");
+            const cat = document.getElementById('manual-category').value;
+            const score = parseInt(document.getElementById('manual-score').value);
             
-            if(step !== 2) {
-                document.getElementById('post-actions').classList.add('hidden');
+            if(selectedCauses.some(c => c.text.toLowerCase() === text.toLowerCase())) {
+                return alert("Esta causa ya ha sido agregada al tablero.");
             }
-        };
-
-        window.openDiagramModal = () => {
-            const modal = document.getElementById('diagram-modal');
-            const content = document.getElementById('diagram-modal-content');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-95');
-            content.classList.add('scale-100');
-        };
-
-        window.closeDiagramModal = () => {
-            const modal = document.getElementById('diagram-modal');
-            const content = document.getElementById('diagram-modal-content');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-        };
-
-        window.selectOption = (optionObj) => {
-            const ticketId = `TKT-${Math.floor(Math.random()*90000) + 10000}`;
             
-            document.getElementById('ui-ticket-id').textContent = ticketId;
-            document.getElementById('ui-res-causa').textContent = optionObj.category;
-            document.getElementById('ui-res-hallazgo').textContent = optionObj.detail;
-            document.getElementById('ui-res-accion').textContent = optionObj.action;
-            
-            // Highlight Ishikawa branch
-            const line = document.getElementById(`svg-branch-${optionObj.category}`);
-            const box = document.getElementById(`box-${optionObj.category}`);
-            if(line && box) {
-                line.classList.add('ishikawa-line-active');
-                box.classList.add('ishikawa-box-active');
-            }
+            addCause(text, cat, score);
+            document.getElementById('manual-cause').value = '';
+        };
 
-            // Save to history
-            const ticketRecord = {
-                id: ticketId,
+        window.addCause = (text, category, score) => {
+            selectedCauses.push({ id: Date.now(), text, category, score });
+            updateBoard();
+            renderDefaultCauses();
+        };
+
+        window.removeCause = (id) => {
+            selectedCauses = selectedCauses.filter(c => c.id !== id);
+            updateBoard();
+            renderDefaultCauses();
+        };
+
+        window.updateBoard = () => {
+            const categories = ['Procesos', 'Infraestructura', 'Personal', 'Herramientas'];
+            categories.forEach(cat => {
+                const list = document.getElementById(`list-${cat}`);
+                const count = document.getElementById(`count-${cat}`);
+                list.innerHTML = '';
+                const causesInCat = selectedCauses.filter(c => c.category === cat);
+                count.textContent = causesInCat.length;
+                
+                causesInCat.forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center bg-black/20 p-2 rounded border border-white/5";
+                    li.innerHTML = `
+                        <span class="truncate pr-2" title="${c.text}">${c.text}</span>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="text-xs bg-sand text-primary font-bold px-1.5 rounded">${c.score}</span>
+                            <button onclick="removeCause(${c.id})" class="text-red-400 hover:text-red-300">×</button>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            });
+        };
+
+        window.generateDiagrams = () => {
+            if(selectedCauses.length === 0) return alert("Añade al menos una causa para generar el análisis.");
+            
+            // 1. Llenar Ishikawa
+            document.getElementById('ishi-head').textContent = problemText;
+            document.getElementById('res-problem').textContent = problemText;
+            const categories = ['Procesos', 'Infraestructura', 'Personal', 'Herramientas'];
+            categories.forEach(cat => {
+                const ul = document.getElementById(`ishi-${cat}`);
+                ul.innerHTML = '';
+                selectedCauses.filter(c => c.category === cat).forEach(c => {
+                    ul.innerHTML += `<li>${c.text} <span class="text-[10px] text-sand">(Imp: ${c.score})</span></li>`;
+                });
+            });
+
+            // 2. Generar Pareto
+            generatePareto();
+
+            // Save to history automatically
+            saveTicket({
+                id: `ANA-${Math.floor(Math.random()*9000)+1000}`,
                 date: new Date().toLocaleDateString(),
-                title: currentCase.title,
-                category: optionObj.category,
-                detail: optionObj.detail
-            };
-            saveTicket(ticketRecord);
+                title: problemText,
+                category: "Multicausal",
+                detail: `Análisis Pareto generado con ${selectedCauses.length} causas.`
+            });
 
             goToStep(2);
             setTimeout(() => {
@@ -186,80 +324,100 @@ import IshikawaDiagram from '../components/IshikawaDiagram.astro';
             }, 500);
         };
 
-        window.startRandomCase = () => {
-            cases = getCases();
-            if(cases.length === 0) return;
-            const randomIndex = Math.floor(Math.random() * cases.length);
-            currentCase = cases[randomIndex];
+        function generatePareto() {
+            const container = document.getElementById('pareto-container');
+            const svgLine = document.getElementById('pareto-line-svg');
             
-            document.getElementById('ui-case-title').textContent = currentCase.title;
-            document.getElementById('ui-case-symptom').textContent = currentCase.symptom;
-            
-            // Randomize options order
-            const options = [...currentCase.options].sort(() => Math.random() - 0.5);
-            const optionsContainer = document.getElementById('ui-case-options');
-            optionsContainer.innerHTML = '';
-            
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "w-full text-left p-4 rounded-xl glass-card hover:bg-white/10 transition-colors border border-white/5 flex gap-3 group";
-                btn.onclick = () => window.selectOption(opt);
-                btn.innerHTML = `
-                    <div class="mt-1 text-accent group-hover:scale-110 transition-transform">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                    </div>
-                    <div>${opt.text}</div>
-                `;
-                optionsContainer.appendChild(btn);
+            // Remover barras anteriores manteniendo ejes y svg
+            Array.from(container.children).forEach(child => {
+                if(!child.classList.contains('absolute') && child.tagName !== 'svg') {
+                    child.remove();
+                }
             });
-            
-            // Limpiar Ishikawa visual
-            document.querySelectorAll('.ishikawa-line-active').forEach(el => el.classList.remove('ishikawa-line-active'));
-            document.querySelectorAll('.ishikawa-box-active').forEach(el => el.classList.remove('ishikawa-box-active'));
 
-            goToStep(1);
-        };
+            // Ordenar de mayor a menor score
+            let sorted = [...selectedCauses].sort((a,b) => b.score - a.score);
+            
+            let totalScore = sorted.reduce((sum, c) => sum + c.score, 0);
+            let cumulative = 0;
+            
+            // Coordenadas para la línea SVG
+            let points = [];
+            const maxBarHeight = 200; // Refactorizado: altura base menor para las barras
+
+            sorted.forEach((c, index) => {
+                cumulative += c.score;
+                const percent = (cumulative / totalScore) * 100;
+                
+                // Barra HTML
+                const barWrapper = document.createElement('div');
+                barWrapper.className = "flex flex-col items-center justify-end h-full relative group w-12"; // Más angosto
+                
+                const heightPx = (c.score / 5) * maxBarHeight; // 5 is max score
+                
+                barWrapper.innerHTML = `
+                    <div class="w-full bg-accent/60 border border-accent rounded-t-sm transition-all group-hover:bg-accent" style="height: ${heightPx}px"></div>
+                    <div class="absolute -bottom-6 text-[10px] text-gray-400 whitespace-nowrap overflow-hidden text-ellipsis w-16 text-center" title="${c.text}">C${index+1}</div>
+                    <div class="absolute top-0 opacity-0 group-hover:opacity-100 bg-black/80 text-xs p-1 rounded -translate-y-full transition-opacity z-20 w-32 text-center pointer-events-none">
+                        ${c.text} (Puntos: ${c.score})<br/>Acum: ${Math.round(percent)}%
+                    </div>
+                `;
+                container.appendChild(barWrapper);
+            });
+
+            // Dibujar la línea SVG con un pequeño delay para que el render acomode los anchos
+            setTimeout(() => {
+                const rect = container.getBoundingClientRect();
+                const bars = Array.from(container.children).filter(c => c.tagName === 'DIV' && c.classList.contains('w-12'));
+                
+                let svgHtml = '';
+                let cumulativeInner = 0;
+                
+                bars.forEach((bar, index) => {
+                    cumulativeInner += sorted[index].score;
+                    const percent = (cumulativeInner / totalScore);
+                    
+                    const barRect = bar.getBoundingClientRect();
+                    // Calcular centro de la barra relativo al contenedor SVG
+                    const x = (barRect.left - rect.left) + (barRect.width / 2);
+                    // Y basado en el porcentaje (0% = bottom, 100% = top)
+                    const y = rect.height - (percent * rect.height);
+                    
+                    points.push(`${x},${y}`);
+                    
+                    // Punto rojo
+                    svgHtml += `<circle cx="${x}" cy="${y}" r="4" fill="#ef4444" />`;
+                });
+                
+                if(points.length > 0) {
+                    svgHtml += `<polyline points="${points.join(' ')}" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4 2" />`;
+                }
+                
+                svgLine.innerHTML = svgHtml;
+            }, 100);
+        }
 
         window.downloadReport = async () => {
             try {
                 const captureEl = document.getElementById('capture-area');
-                
-                const dataUrl = await htmlToImage.toPng(captureEl, {
+                const dataUrl = await window.htmlToImage.toPng(captureEl, {
                     backgroundColor: '#0D1B2A',
-                    pixelRatio: 2
+                    pixelRatio: 2,
+                    filter: (node) => {
+                        // Ignorar los botones de borrar para la exportación
+                        return !(node.tagName === 'BUTTON' && node.textContent === '×');
+                    }
                 });
                 
                 const link = document.createElement('a');
-                link.download = `Reporte_${document.getElementById('ui-ticket-id').textContent}.png`;
+                link.download = `Analisis_Riesgos_OptimaTI.png`;
                 link.href = dataUrl;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             } catch (err) {
                 console.error("Error al exportar PNG:", err);
-                alert("Hubo un error al generar la imagen. Revisa la consola.");
-            }
-        };
-
-        window.exportDiagram = async () => {
-            try {
-                // Selecciona el área específica del diagrama
-                const captureEl = document.getElementById('ishikawa-export-area');
-                
-                const dataUrl = await htmlToImage.toPng(captureEl, {
-                    backgroundColor: '#0D1B2A',
-                    pixelRatio: 3 // Mayor calidad para el diagrama
-                });
-                
-                const link = document.createElement('a');
-                link.download = `Diagrama_Ishikawa_${document.getElementById('ui-ticket-id').textContent}.png`;
-                link.href = dataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (err) {
-                console.error("Error al exportar Diagrama:", err);
-                alert("Hubo un error al generar la imagen del diagrama.");
+                alert("Hubo un error al generar la imagen.");
             }
         };
     </script>
