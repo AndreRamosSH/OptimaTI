@@ -1,0 +1,138 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="OptimaTI - Dashboard">
+    <div class="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
+        <h2 class="text-3xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-light to-sand">
+            Panel de Control y Casos
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10">
+            <!-- Historial de Tickets -->
+            <div class="glass p-6 rounded-3xl border border-white/10">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><path d="M14 3v5h5M16 13H8M16 17H8M10 9H8"/></svg>
+                        Historial de Diagnósticos
+                    </h3>
+                </div>
+                
+                <div id="history-container" class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scroll">
+                    <!-- Inyectado por JS -->
+                    <div class="text-center text-gray-500 py-10" id="empty-history">
+                        No hay tickets generados aún. Realiza un diagnóstico primero.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Casos (Agregar Nuevo) -->
+            <div class="glass p-6 rounded-3xl border border-white/10">
+                <h3 class="text-xl font-bold flex items-center gap-2 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    Añadir Caso de Estudio
+                </h3>
+                
+                <form id="add-case-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Título del Caso</label>
+                        <input type="text" id="c-title" required class="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-accent" placeholder="Ej. Caída de base de datos" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Síntoma Reportado</label>
+                        <textarea id="c-symptom" required class="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-accent resize-none h-20" placeholder="¿Qué reportó el usuario?"></textarea>
+                    </div>
+                    
+                    <div class="border-t border-white/10 pt-4 mt-4">
+                        <label class="block text-sm font-bold text-accent mb-2">Crear una opción de respuesta (La correcta)</label>
+                        <div class="space-y-3">
+                            <select id="c-category" class="w-full bg-primary border border-white/10 rounded-lg p-2 text-white outline-none focus:border-accent">
+                                <option value="Infraestructura">Infraestructura</option>
+                                <option value="Procesos">Procesos</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Herramientas">Herramientas</option>
+                            </select>
+                            <input type="text" id="c-opt-text" required class="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-accent" placeholder="Texto de la opción (ej. Falla física)" />
+                            <input type="text" id="c-opt-detail" required class="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-accent" placeholder="Detalle técnico (Hallazgo)" />
+                            <input type="text" id="c-opt-action" required class="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white outline-none focus:border-accent" placeholder="Plan de acción ITIL" />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-success hover:bg-success/80 text-white font-bold py-2 rounded-lg transition-colors mt-4">
+                        Guardar Caso
+                    </button>
+                    <div id="form-msg" class="text-sm text-center text-sand hidden">¡Caso añadido con éxito!</div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+
+    <script type="module">
+        import { getHistory, saveCase } from '/src/scripts/store.js';
+
+        // Load History
+        const history = getHistory();
+        const historyContainer = document.getElementById('history-container');
+        const emptyMsg = document.getElementById('empty-history');
+
+        if(history.length > 0) {
+            emptyMsg.style.display = 'none';
+            history.forEach(t => {
+                const card = document.createElement('div');
+                card.className = "bg-white/5 border border-white/10 p-4 rounded-xl";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-mono text-accent bg-accent/20 px-2 py-1 rounded">${t.id}</span>
+                        <span class="text-xs text-gray-400">${t.date}</span>
+                    </div>
+                    <div class="font-bold text-light mb-1">${t.title}</div>
+                    <div class="text-sm text-gray-400 mb-2">Causa: <span class="text-sand">${t.category}</span></div>
+                    <div class="text-xs text-gray-500 italic">"${t.detail}"</div>
+                `;
+                historyContainer.appendChild(card);
+            });
+        }
+
+        // Form Submission
+        document.getElementById('add-case-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newCase = {
+                id: `custom-case-${Date.now()}`,
+                title: document.getElementById('c-title').value,
+                symptom: document.getElementById('c-symptom').value,
+                options: [
+                    {
+                        id: 'opt-custom',
+                        category: document.getElementById('c-category').value,
+                        text: document.getElementById('c-opt-text').value,
+                        detail: document.getElementById('c-opt-detail').value,
+                        action: document.getElementById('c-opt-action').value
+                    }
+                ]
+            };
+            
+            saveCase(newCase);
+            
+            const msg = document.getElementById('form-msg');
+            msg.classList.remove('hidden');
+            document.getElementById('add-case-form').reset();
+            
+            setTimeout(() => {
+                msg.classList.add('hidden');
+            }, 3000);
+        });
+    </script>
+</Layout>

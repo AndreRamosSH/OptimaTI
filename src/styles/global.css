@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0D1B2A;
+  --color-secondary: #1B263B;
+  --color-accent: #415A77;
+  --color-success: #778D7A;
+  --color-sand: #D4C4A8;
+  --color-light: #F4F1DE;
+}
+
+body {
+  background-color: var(--color-primary);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(27, 38, 59, 0.4), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(65, 90, 119, 0.3), transparent 25%);
+  background-attachment: fixed;
+  color: var(--color-light);
+  min-height: 100vh;
+}
+
+/* Glassmorphism utility classes */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-card {
+  background: rgba(27, 38, 59, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 196, 168, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 196, 168, 0.3);
+  background: rgba(65, 90, 119, 0.4);
+}

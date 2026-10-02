@@ -1,0 +1,101 @@
+---
+---
+<div class="w-full overflow-hidden bg-primary/40 rounded-xl border border-white/10 relative p-4" id="ishikawa-export-area">
+    <div class="relative w-full aspect-[2/1] min-w-[800px] max-w-[1000px] mx-auto" id="ishikawa-canvas">
+        
+        <!-- SVG Bones -->
+        <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#415A77" />
+                </marker>
+            </defs>
+            <!-- Main Spine -->
+            <line x1="50" y1="250" x2="800" y2="250" stroke="#415A77" stroke-width="6" marker-end="url(#arrow)"/>
+            
+            <!-- Branches (id matches JS for highlighting) -->
+            <line id="svg-branch-Procesos" x1="250" y1="100" x2="400" y2="250" stroke="#415A77" stroke-width="4" class="transition-all duration-300"/>
+            <line id="svg-branch-Infraestructura" x1="550" y1="100" x2="700" y2="250" stroke="#415A77" stroke-width="4" class="transition-all duration-300"/>
+            
+            <line id="svg-branch-Personal" x1="250" y1="400" x2="400" y2="250" stroke="#415A77" stroke-width="4" class="transition-all duration-300"/>
+            <line id="svg-branch-Herramientas" x1="550" y1="400" x2="700" y2="250" stroke="#415A77" stroke-width="4" class="transition-all duration-300"/>
+        </svg>
+
+        <!-- HTML Nodes -->
+        <!-- Cabeza -->
+        <div class="absolute right-[5%] top-1/2 -translate-y-1/2 bg-secondary border-2 border-sand p-4 rounded-xl text-center shadow-xl z-10 w-48">
+            <span class="text-base font-black text-sand leading-tight block uppercase">Baja Eficiencia Operativa</span>
+        </div>
+
+        <!-- Procesos -->
+        <div id="box-Procesos" class="absolute left-[5%] top-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-60 shadow-lg branch-box transition-all duration-300 backdrop-blur-md">
+            <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Procesos
+            </div>
+            <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
+                <li>Falta de estandarización ITIL</li>
+                <li>Documentación desactualizada</li>
+            </ul>
+        </div>
+
+        <!-- Infraestructura -->
+        <div id="box-Infraestructura" class="absolute left-[35%] top-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-64 shadow-lg branch-box transition-all duration-300 backdrop-blur-md">
+            <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/></svg>
+                Infraestructura
+            </div>
+            <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
+                <li>Servidores con capacidad insuficiente</li>
+                <li>Fallas de hardware recurrentes</li>
+            </ul>
+        </div>
+
+        <!-- Personal -->
+        <div id="box-Personal" class="absolute left-[5%] bottom-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-60 shadow-lg branch-box transition-all duration-300 backdrop-blur-md">
+            <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                Personal
+            </div>
+            <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
+                <li>Falta de capacitación continua</li>
+                <li>Comunicación deficiente</li>
+            </ul>
+        </div>
+
+        <!-- Herramientas -->
+        <div id="box-Herramientas" class="absolute left-[35%] bottom-[5%] bg-white/10 border border-white/20 p-4 rounded-xl w-64 shadow-lg branch-box transition-all duration-300 backdrop-blur-md">
+            <div class="text-lg font-bold text-white mb-2 border-b border-white/20 pb-1 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-accent"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                Herramientas
+            </div>
+            <ul class="text-sm text-gray-300 space-y-1 list-disc list-inside">
+                <li>Sistemas de monitoreo obsoletos</li>
+                <li>Integración limitada entre plataformas</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* CSS classes for dynamic highlighting */
+    .ishikawa-box-active {
+        background-color: rgba(239, 68, 68, 0.9) !important;
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 25px rgba(239, 68, 68, 0.5) !important;
+        transform: scale(1.05);
+        z-index: 20;
+    }
+    .ishikawa-box-active div, .ishikawa-box-active ul {
+        color: white !important;
+    }
+    .ishikawa-box-active svg {
+        color: white !important;
+    }
+    .ishikawa-line-active {
+        stroke: #ef4444 !important;
+        stroke-width: 8 !important;
+        filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+    }
+</style>
